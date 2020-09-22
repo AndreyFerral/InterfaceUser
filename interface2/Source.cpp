@@ -80,6 +80,24 @@ void DrawMenuForestRes(HANDLE hConsole) {
     }
     menu3 = { 17, 1 };
 }
+void DrawMenuWaterRes(HANDLE hConsole) {
+    string menu2[7] = {
+    "+----------------+",
+    "| Жидкое сост.   |",
+    "|----------------|",
+    "| Газообразное   |",
+    "|----------------|",
+    "| Твердое сост.  |",
+    "+----------------+",
+    };
+
+    COORD menu3 = { 36, 1 };
+    for (int i = 0; i < 7; i++) {
+        menu3.Y++; SetConsoleCursorPosition(hConsole, menu3);
+        cout << menu2[i] << "\n";
+    }
+    menu3 = { 36, 1 };
+}
 void FillMenuText(HANDLE hConsole, COORD position) {
     COORD position1 = { 1, 1 };
     COORD position2 = { 18, 1 };
@@ -150,11 +168,11 @@ void FillMenuTextForestRes(HANDLE hConsole, COORD position) {
     COORD position10 = { 18, 7 };
 
     string menu2text[3] = {
-    " Лесные  ",
-    " Кормовые  ",
+    " Лесные           ",
+    " Кормовые         ",
     " Пищевые ресурсы  ",
     };
-    
+
     if (position.Y == 1) {
         SetConsoleCursorPosition(hConsole, position2);
         cout << " Растительный мир ";
@@ -173,7 +191,36 @@ void FillMenuTextForestRes(HANDLE hConsole, COORD position) {
         cout << menu2text[2];
     }
 }
+void FillMenuTextWaterRes(HANDLE hConsole, COORD position) {
+    COORD position3 = { 37, 1 };
+    COORD position11 = { 37, 3 };
+    COORD position12 = { 37, 5 };
+    COORD position13 = { 37, 7 };
 
+    string menu3text[3] = {
+    " Жидкое сост.   ",
+    " Газообразное   ",
+    " Твердое сост.  ",
+    };
+
+    if (position.Y == 1) {
+        SetConsoleCursorPosition(hConsole, position3);
+        cout << " Водные ресурсы ";
+    }
+
+    if (position.Y == 3) {
+        SetConsoleCursorPosition(hConsole, position11);
+        cout << menu3text[0];
+    }
+    if (position.Y == 5) {
+        SetConsoleCursorPosition(hConsole, position12);
+        cout << menu3text[1];
+    }
+    if (position.Y == 7) {
+        SetConsoleCursorPosition(hConsole, position13);
+        cout << menu3text[2];
+    }
+}
 
 enum { UP = 72, DOWN = 80, LEFT = 75, RIGHT = 77, ENTER = 13 };
 
@@ -199,11 +246,10 @@ int main() {
         case UP: {
             if (position.X == 10 && position.Y > 2) {
                 position.Y = position.Y - 2;
-                
+
                 DrawMenu(hConsole);
                 DrawMenuMineralRes(hConsole); Fill();
                 FillMenuTextMineralRes(hConsole, position);
-                Clear(); SetConsoleCursorPosition(hConsole, position);
             }
 
             if (position.X == 25 && position.Y > 2) {
@@ -212,9 +258,16 @@ int main() {
                 DrawMenu(hConsole);
                 DrawMenuForestRes(hConsole); Fill();
                 FillMenuTextForestRes(hConsole, position);
-                Clear(); SetConsoleCursorPosition(hConsole, position);
             }
 
+            if (position.X == 40 && position.Y > 2) {
+                position.Y = position.Y - 2;
+
+                DrawMenu(hConsole);
+                DrawMenuWaterRes(hConsole); Fill();
+                FillMenuTextWaterRes(hConsole, position);
+            }
+            Clear();// SetConsoleCursorPosition(hConsole, position);
             break;
         }
         case DOWN: {
@@ -238,12 +291,15 @@ int main() {
                 }
             }
             if (IsWaterResWork == true) {
-                if (position.X == 45 && position.Y < 6) {
+                if (position.X == 40 && position.Y < 6) {
                     position.Y = position.Y + 2;
-                    
+
+                    DrawMenu(hConsole);
+                    DrawMenuWaterRes(hConsole); Fill();
+                    FillMenuTextWaterRes(hConsole, position);
                 }
             }
-            Clear(); SetConsoleCursorPosition(hConsole, position);
+            Clear(); //SetConsoleCursorPosition(hConsole, position);
             break;
         }
         case LEFT: {
@@ -255,11 +311,11 @@ int main() {
             break;
         }
         case RIGHT: {
-           if (position.X < 46 && position.Y == 1) {
-               position.X = position.X + 15;
-               DrawMenu(hConsole); Fill();
-               FillMenuText(hConsole, position);
-           }
+            if (position.X < 46 && position.Y == 1) {
+                position.X = position.X + 15;
+                DrawMenu(hConsole); Fill();
+                FillMenuText(hConsole, position);
+            }
             break;
         }
         case ENTER: {
@@ -268,7 +324,6 @@ int main() {
                 IsForestResWork = false;
                 IsWaterResWork = false;
                 Clear(); DrawMenuMineralRes(hConsole);
-                SetConsoleCursorPosition(hConsole, position);
             }
 
             if (position.X == 25 && position.Y == 1) {
@@ -276,13 +331,13 @@ int main() {
                 IsForestResWork = true;
                 IsWaterResWork = false;
                 Clear(); DrawMenuForestRes(hConsole);
-                SetConsoleCursorPosition(hConsole, position);
             }
 
             if (position.X == 40 && position.Y == 1) {
                 IsMineralResWork = false;
                 IsForestResWork = false;
                 IsWaterResWork = true;
+                Clear(); DrawMenuWaterRes(hConsole);
             }
 
             if (position.X == 55 && position.Y == 1) {
@@ -290,6 +345,7 @@ int main() {
                 return 0;
             }
             break;
+            // SetConsoleCursorPosition(hConsole, position);
         }
 
         default: break;
