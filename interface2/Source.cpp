@@ -24,6 +24,22 @@ void FirstRun(HANDLE hConsole, COORD position) {
     cout << " Богатства недр ";
     SetConsoleCursorPosition(hConsole, position);
 }
+void ClearText(HANDLE hConsole, COORD positiontext) {
+    SetConsoleCursorPosition(hConsole, positiontext);
+    string cleartext[7] = {
+"                                                                           ",
+"                                                                           ",
+"                                                                           ",
+"                                                                           ",
+"                                                                           ",
+"                                                                           ",
+"                                                                           ",
+    };
+
+    for (int i = 0; i < 6; i++) {
+        cout << cleartext[i];
+    }
+}
 void DrawMenu(HANDLE hConsole) {
     COORD standpos = { 0, 0 };
     string menu[9] = {
@@ -234,6 +250,7 @@ int main() {
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	// Получение дескриптора устройства стандартного вывода
     COORD position = { 10, 1 };
+    COORD positiontext = { 0, 10 };
 
     DrawMenu(hConsole); Fill();
     FirstRun(hConsole, position);
@@ -267,7 +284,7 @@ int main() {
                 DrawMenuWaterRes(hConsole); Fill();
                 FillMenuTextWaterRes(hConsole, position);
             }
-            Clear();// SetConsoleCursorPosition(hConsole, position);
+            Clear();
             break;
         }
         case DOWN: {
@@ -299,7 +316,7 @@ int main() {
                     FillMenuTextWaterRes(hConsole, position);
                 }
             }
-            Clear(); //SetConsoleCursorPosition(hConsole, position);
+            Clear(); 
             break;
         }
         case LEFT: {
@@ -318,34 +335,50 @@ int main() {
             }
             break;
         }
+
         case ENTER: {
-            if (position.X == 10 && position.Y == 1) {
-                IsMineralResWork = true;
-                IsForestResWork = false;
-                IsWaterResWork = false;
-                Clear(); DrawMenuMineralRes(hConsole);
+            if (position.Y == 1) {
+                if (position.X == 10) {
+                    IsMineralResWork = true;
+                    IsForestResWork = false;
+                    IsWaterResWork = false;
+                    Clear(); DrawMenuMineralRes(hConsole);
+                }
+                if (position.X == 25) {
+                    IsMineralResWork = false;
+                    IsForestResWork = true;
+                    IsWaterResWork = false;
+                    Clear(); DrawMenuForestRes(hConsole);
+                }
+                if (position.X == 40) {
+                    IsMineralResWork = false;
+                    IsForestResWork = false;
+                    IsWaterResWork = true;
+                    Clear(); DrawMenuWaterRes(hConsole);
+                }
+                if (position.X == 55) {
+                    Clear(); return 0;
+                }
             }
 
-            if (position.X == 25 && position.Y == 1) {
-                IsMineralResWork = false;
-                IsForestResWork = true;
-                IsWaterResWork = false;
-                Clear(); DrawMenuForestRes(hConsole);
+            ClearText(hConsole, positiontext);
+            SetConsoleCursorPosition(hConsole, positiontext);
+            if (position.X == 10) {
+                if (position.Y == 3) cout << "К топливным относятся такие полезные искомаемые, как нефть, природный газ, уголь, торф и горячие сланцы.";
+                if (position.Y == 5) cout << "Рудные минеральные ресурсы разделяют на руды черных металлов и цветных металлов. \nК черным металлам относятся: железо, марганца, хрома. \nК цветным металлам относятся: медь, свинец, цинк и алюминей.";
+                if (position.Y == 7) cout << "Нерудные минеральные ресурсы разделяют на химическое сырье, строительные материалы и драгоценные камни. \nК химическому сырью относятся: калийные соли, сера, фосфит, апатит и пирит. \nК строительным материалам относятся: гранит, известняк, песок и глина. \nК драгоценным камням относятся: алмаз, изумруд, рубин, сапфир, яшма и агат.";
             }
-
-            if (position.X == 40 && position.Y == 1) {
-                IsMineralResWork = false;
-                IsForestResWork = false;
-                IsWaterResWork = true;
-                Clear(); DrawMenuWaterRes(hConsole);
+            if (position.X == 25) {
+                if (position.Y == 3) cout << "Лесные минеральные ресурсы разделяют на древесные и недревесные. \nК недревесным относятся: ягоды, грибы, орехи, смола и лекарственные растения.";
+                if (position.Y == 5) cout << "К кормовым ресурсам относятся травы сенокосов и пастбищ.";
+                if (position.Y == 7) cout << "К пищевым растительным ресурсам морей относятся водоросли.";
             }
-
-            if (position.X == 55 && position.Y == 1) {
-                Clear();
-                return 0;
+            if (position.X == 40) {
+                if (position.Y == 3) cout << "К водным ресурсам в жидком состоянии относятся океана, моря, озера, реки, болота, подземные воды и искуственно-созданные водоемы.";
+                if (position.Y == 5) cout << "К водным ресурсам газообразного состояния относится парообразное состояние атмосферы.";
+                if (position.Y == 7) cout << "К водным ресурсам твердого состояния относятся: замерзшая вода ледников Антарктиды, Арктики и снежные вершины гор.";
             }
             break;
-            // SetConsoleCursorPosition(hConsole, position);
         }
 
         default: break;
