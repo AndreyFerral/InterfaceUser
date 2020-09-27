@@ -1,298 +1,257 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <ctime>
 using std::cout;
 using std::string;
 
-void Fill() {
-    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hStdOut, (WORD)((15 << 4) | 0));
+void SwitchSizeCursor() {
+    CONSOLE_CURSOR_INFO CCI;
+    srand(time(0)); // автоматическая рандомизация
+    CCI.dwSize = 1 + rand() % 100;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CCI);
 }
-void Clear() {
+
+void ClearTextFon()
+{
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hStdOut, (WORD)((0 << 4) | 15));
 }
-void HideCursor() {
-    CONSOLE_CURSOR_INFO CCI;
-    CCI.bVisible = false;
-    CCI.dwSize = 1;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CCI);
-}
-void FirstRun(HANDLE hConsole, COORD position) {
-    COORD position1 = { 1, 1 };
-    SetConsoleCursorPosition(hConsole, position1);
-    cout << " Богатства недр ";
-    SetConsoleCursorPosition(hConsole, position);
-}
-void DrawMenu(HANDLE hConsole) {
-    COORD standpos = { 0, 0 };
-    string menu[9] = {
-    "+------------------------------------------------------------+",
-    "| Богатства недр | Растительный мир | Водные ресурсы | Выход |",
-    "+------------------------------------------------------------+",
-    "                                                              ",
-    "                                                              ",
-    "                                                              ",
-    "                                                              ",
-    "                                                              ",
-    "                                                              ",
-    };
 
-    Clear();
-    SetConsoleCursorPosition(hConsole, standpos);
+void SetColorFon()
+{
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    srand(time(0)); // автоматическая рандомизация
+    SetConsoleTextAttribute(hStdOut, (WORD)((1 + rand() % 13 << 4) | 15));
+}
+
+void SetColorText()
+{
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    srand(time(0)); // автоматическая рандомизация
+    SetConsoleTextAttribute(hStdOut, (WORD)((0 << 4) | 1 + rand() % 13));
+}
+
+void func(COORD& positionMenu, HANDLE hConsole) {
+    positionMenu.Y++; SetConsoleCursorPosition(hConsole, positionMenu);
+}
+
+void DeleteMenu(COORD& positionMenu, HANDLE hConsole) {
+    SetConsoleCursorPosition(hConsole, positionMenu);
     for (int i = 0; i < 9; i++) {
-        cout << menu[i] << "\n";
+        func(positionMenu, hConsole); cout << "                              ";
     }
+    positionMenu = { 50, 10 };
 }
-void DrawMenuMineralRes(HANDLE hConsole) {
-    string menu1[7] = {
-    "+----------+",
-    "| Топливые |",
-    "|----------|",
-    "| Рудные   |",
-    "|----------|",
-    "| Нерудные |",
-    "+----------+",
+
+void DeletePodMenu(HANDLE hConsole) {
+    COORD pospal = { 63, 12 };
+
+    SetConsoleCursorPosition(hConsole, pospal);
+    for (int i = 0; i < 3; i++) {
+        func(pospal, hConsole); cout << "                   ";
+    }
+    pospal = { 63, 12 };
+}
+
+void OutputPalitra(HANDLE hConsole) {
+
+    string palitra[3] = {
+    "-----------------",
+    " Символ |  Фон  |",
+    "-----------------",
     };
 
-    COORD menu2 = { 6, 1 };
-    for (int i = 0; i < 7; i++) {
-        menu2.Y++; SetConsoleCursorPosition(hConsole, menu2);
-        cout << menu1[i] << "\n";
+    COORD pospal = { 63, 12 };
+    SetConsoleCursorPosition(hConsole, pospal);
+    for (int i = 0; i < 3; i++) {
+        pospal.Y++; SetConsoleCursorPosition(hConsole, pospal); cout << palitra[i];
     }
-    menu2 = { 6, 1 };
-}
-void DrawMenuForestRes(HANDLE hConsole) {
-    string menu2[7] = {
-    "+------------------+",
-    "| Лесные           |",
-    "|------------------|",
-    "| Кормовые         |",
-    "|------------------|",
-    "| Пищевые ресурсы  |",
-    "+------------------+",
-    };
-
-    COORD menu3 = { 17, 1 };
-    for (int i = 0; i < 7; i++) {
-        menu3.Y++; SetConsoleCursorPosition(hConsole, menu3);
-        cout << menu2[i] << "\n";
-    }
-    menu3 = { 17, 1 };
-}
-void FillMenuText(HANDLE hConsole, COORD position) {
-    COORD position1 = { 1, 1 };
-    COORD position2 = { 18, 1 };
-    COORD position3 = { 37, 1 };
-    COORD position4 = { 54, 1 };
-
-    string menutext[4] = {
-    " Богатства недр ",
-    " Растительный мир ",
-    " Водные ресурсы ",
-    " Выход ",
-    };
-
-    if (position.X == 10 && position.Y == 1) {
-        SetConsoleCursorPosition(hConsole, position1);
-        cout << menutext[0];
-    }
-
-    if (position.X == 25 && position.Y == 1) {
-        SetConsoleCursorPosition(hConsole, position2);
-        cout << menutext[1];
-    }
-
-    if (position.X == 40 && position.Y == 1) {
-        SetConsoleCursorPosition(hConsole, position3);
-        cout << menutext[2];
-    }
-
-    if (position.X == 55 && position.Y == 1) {
-        SetConsoleCursorPosition(hConsole, position4);
-        cout << menutext[3];
-    }
-    SetConsoleCursorPosition(hConsole, position);
-}
-void FillMenuTextMineralRes(HANDLE hConsole, COORD position) {
-    COORD position1 = { 1, 1 };
-    COORD position5 = { 7, 3 };
-    COORD position6 = { 7, 5 };
-    COORD position7 = { 7, 7 };
-
-    string menu1text[3] = {
-    " Топливые ",
-    " Рудные   ",
-    " Нерудные ",
-    };
-
-    if (position.Y == 1) {
-        SetConsoleCursorPosition(hConsole, position1);
-        cout << " Богатства недр ";
-    }
-    if (position.Y == 3) {
-        SetConsoleCursorPosition(hConsole, position5);
-        cout << menu1text[0];
-    }
-    if (position.Y == 5) {
-        SetConsoleCursorPosition(hConsole, position6);
-        cout << menu1text[1];
-    }
-    if (position.Y == 7) {
-        SetConsoleCursorPosition(hConsole, position7);
-        cout << menu1text[2];
-    }
-}
-void FillMenuTextForestRes(HANDLE hConsole, COORD position) {
-    COORD position2 = { 18, 1 };
-    COORD position8 = { 18, 3 };
-    COORD position9 = { 18, 5 };
-    COORD position10 = { 18, 7 };
-
-    string menu2text[3] = {
-    " Лесные  ",
-    " Кормовые  ",
-    " Пищевые ресурсы  ",
-    };
-
-    if (position.Y == 1) {
-        SetConsoleCursorPosition(hConsole, position2);
-        cout << " Растительный мир ";
-    }
-
-    if (position.Y == 3) {
-        SetConsoleCursorPosition(hConsole, position8);
-        cout << menu2text[0];
-    }
-    if (position.Y == 5) {
-        SetConsoleCursorPosition(hConsole, position9);
-        cout << menu2text[1];
-    }
-    if (position.Y == 7) {
-        SetConsoleCursorPosition(hConsole, position10);
-        cout << menu2text[2];
-    }
+    pospal = { 63, 12 };
 }
 
+enum { UP = 72, DOWN = 80, LEFT = 75, RIGHT = 77, F2 = 60, ENTER = 13 };
 
-enum { UP = 72, DOWN = 80, LEFT = 75, RIGHT = 77, ENTER = 13 };
-
-int main() {
+int main()
+{
     setlocale(LC_ALL, "rus");
-    HideCursor();
+    ClearTextFon();
 
-    bool IsMineralResWork = false;
-    bool IsForestResWork = false;
-    bool IsWaterResWork = false;
+    HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hStdOut, (WORD)((0 << 4) | 15));
 
+    COORD positionMenu = { 50, 10 };	                // Объявление необходимой структуры
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	// Получение дескриптора устройства стандартного вывода
-    COORD position = { 10, 1 };
 
-    DrawMenu(hConsole); Fill();
-    FirstRun(hConsole, position);
+    string MENU[9] = {
+        "-------------",
+        "|  Курсор   |",
+        "-------------",
+        "|  Палитра  |",
+        "-------------",
+        "|  Эхо      |",
+        "-------------",
+        "|  Выход    |",
+        "-------------"
+    };
 
+    bool IsMenuWork = false;
     bool exit = false;
     char ch;
+    COORD position = { 0, 0 };
+    COORD StandartPosition = { 0, 0 };
+    SetConsoleCursorPosition(hConsole, position);
+
     while (!exit) {
         ch = _getch();
         switch (ch) {
         case UP: {
-            if (position.X == 10 && position.Y > 2) {
-                position.Y = position.Y - 2;
-
-                DrawMenu(hConsole);
-                DrawMenuMineralRes(hConsole); Fill();
-                FillMenuTextMineralRes(hConsole, position);
-                Clear(); SetConsoleCursorPosition(hConsole, position);
+            if (position.Y != 0 && IsMenuWork == true) {
+                position.Y--; SetConsoleCursorPosition(hConsole, position);
+                if (position.X >= 50 && position.X <= 62) {
+                    if (position.Y >= 14 && position.Y <= 15) OutputPalitra(hConsole);
+                    else DeletePodMenu(hConsole);
+                    SetConsoleCursorPosition(hConsole, position);
+                }
             }
-
-            if (position.X == 25 && position.Y > 2) {
-                position.Y = position.Y - 2;
-
-                DrawMenu(hConsole);
-                DrawMenuForestRes(hConsole); Fill();
-                FillMenuTextForestRes(hConsole, position);
-                Clear(); SetConsoleCursorPosition(hConsole, position);
-            }
-
             break;
         }
         case DOWN: {
-            if (IsMineralResWork == true) {
-                if (position.X == 10 && position.Y < 6) {
-                    position.Y = position.Y + 2;
-
-                    DrawMenu(hConsole);
-                    DrawMenuMineralRes(hConsole); Fill();
-                    FillMenuTextMineralRes(hConsole, position);
+            if (IsMenuWork == true) {
+                position.Y++; SetConsoleCursorPosition(hConsole, position);
+                if (position.X >= 50 && position.X <= 62) {
+                    if (position.Y >= 14 && position.Y <= 15) OutputPalitra(hConsole);
+                    else DeletePodMenu(hConsole);
+                    SetConsoleCursorPosition(hConsole, position);
                 }
             }
-
-            if (IsForestResWork == true) {
-                if (position.X == 25 && position.Y < 6) {
-                    position.Y = position.Y + 2;
-
-                    DrawMenu(hConsole);
-                    DrawMenuForestRes(hConsole); Fill();
-                    FillMenuTextForestRes(hConsole, position);
-                }
-            }
-            if (IsWaterResWork == true) {
-                if (position.X == 45 && position.Y < 6) {
-                    position.Y = position.Y + 2;
-
-                }
-            }
-            Clear(); SetConsoleCursorPosition(hConsole, position);
             break;
         }
         case LEFT: {
-            if (position.X > 10 && position.Y == 1) {
-                position.X = position.X - 15;
-                DrawMenu(hConsole); Fill();
-                FillMenuText(hConsole, position);
+            if (position.X != 0 && IsMenuWork == true) {
+                position.X--; SetConsoleCursorPosition(hConsole, position);
+                if (position.X >= 50 && position.X <= 62) {
+                    if (position.Y >= 14 && position.Y <= 15) OutputPalitra(hConsole);
+                    else DeletePodMenu(hConsole);
+                    SetConsoleCursorPosition(hConsole, position);
+                }
             }
             break;
         }
         case RIGHT: {
-            if (position.X < 46 && position.Y == 1) {
-                position.X = position.X + 15;
-                DrawMenu(hConsole); Fill();
-                FillMenuText(hConsole, position);
+            if (IsMenuWork == true) {
+                position.X++; SetConsoleCursorPosition(hConsole, position);
+                if (position.X >= 50 && position.X <= 62) {
+                    if (position.Y >= 14 && position.Y <= 15) OutputPalitra(hConsole);
+                    else DeletePodMenu(hConsole);
+                    SetConsoleCursorPosition(hConsole, position);
+                }
             }
+            break;
+        }
+        case F2: {
+            IsMenuWork = true;
+            SetConsoleTextAttribute(hStdOut, (WORD)((0 << 4) | 15));
+            SetConsoleCursorPosition(hConsole, positionMenu);
+            for (int i = 0; i < 9; i++) {
+                func(positionMenu, hConsole); cout << MENU[i];
+            }
+            positionMenu = { 50, 10 };
+            SetConsoleCursorPosition(hConsole, StandartPosition);
             break;
         }
         case ENTER: {
-            if (position.X == 10 && position.Y == 1) {
-                IsMineralResWork = true;
-                IsForestResWork = false;
-                IsWaterResWork = false;
-                Clear(); DrawMenuMineralRes(hConsole);
-                SetConsoleCursorPosition(hConsole, position);
+            if (position.X >= 50 && position.X <= 62) {
+                if (position.Y >= 11 && position.Y <= 13) {
+                    IsMenuWork = false;
+                    DeleteMenu(positionMenu, hConsole);
+                    SwitchSizeCursor();
+                    SetConsoleCursorPosition(hConsole, StandartPosition);
+                }
+                if (position.Y >= 16 && position.Y <= 17) {
+                    IsMenuWork = false;
+                    DeleteMenu(positionMenu, hConsole);
+                    SetConsoleCursorPosition(hConsole, StandartPosition);
+                }
+                if (position.Y >= 18 && position.Y <= 19) {
+                    ClearTextFon();
+                    return 0;
+                }
             }
-
-            if (position.X == 25 && position.Y == 1) {
-                IsMineralResWork = false;
-                IsForestResWork = true;
-                IsWaterResWork = false;
-                Clear(); DrawMenuForestRes(hConsole);
-                SetConsoleCursorPosition(hConsole, position);
-            }
-
-            if (position.X == 40 && position.Y == 1) {
-                IsMineralResWork = false;
-                IsForestResWork = false;
-                IsWaterResWork = true;
-            }
-
-            if (position.X == 55 && position.Y == 1) {
-                Clear();
-                return 0;
+            else if (position.Y >= 14 && position.Y <= 15) {
+                if (position.X >= 63 && position.X <= 71) {
+                    IsMenuWork = false;
+                    DeleteMenu(positionMenu, hConsole);
+                    SetColorText();
+                    SetConsoleCursorPosition(hConsole, StandartPosition);
+                }
+                else if (position.X >= 72 && position.X <= 79) {
+                    IsMenuWork = false;
+                    DeleteMenu(positionMenu, hConsole);
+                    SetColorFon();
+                    SetConsoleCursorPosition(hConsole, StandartPosition);
+                }
             }
             break;
         }
 
-        default: break;
+        case 82: { // буква К
+            if (IsMenuWork == true) {
+                IsMenuWork = false;
+                DeleteMenu(positionMenu, hConsole);
+                SwitchSizeCursor();
+                SetConsoleCursorPosition(hConsole, StandartPosition);
+            }
+            else cout << ch;
+            break;
+        }
+        case 71: { // буква П
+            if (IsMenuWork == true) {
+                IsMenuWork = false;
+                DeleteMenu(positionMenu, hConsole);
+                //SetColor();
+                SetConsoleCursorPosition(hConsole, StandartPosition);
+            }
+            else cout << ch;
+            break;
+        }
+        case 67: { // буква C
+            if (IsMenuWork == true) {
+                IsMenuWork = false;
+                DeleteMenu(positionMenu, hConsole);
+                SetColorText();
+                SetConsoleCursorPosition(hConsole, StandartPosition);
+            }
+            else cout << ch;
+            break;
+        }
+        case 65: { // буква Ф
+            if (IsMenuWork == true) {
+                IsMenuWork = false;
+                DeleteMenu(positionMenu, hConsole);
+                SetColorFon();
+                SetConsoleCursorPosition(hConsole, StandartPosition);
+            }
+            else cout << ch;
+            break;
+        }
+        case 39: { // буква Э
+            if (IsMenuWork == true) {
+                IsMenuWork = false;
+                DeleteMenu(positionMenu, hConsole);
+                SetConsoleCursorPosition(hConsole, StandartPosition);
+            }
+            else cout << ch;
+            break;
+        }
+        case 68: { // буква В
+            if (IsMenuWork == true) { return 0; }
+            else cout << ch;
+            break;
+        }
+        default:
+            if (IsMenuWork == false && ch > 0) cout << ch;
+            break;
         }
     }
     return 0;

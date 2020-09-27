@@ -1,6 +1,7 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <string>
 using std::cout;
 using std::string;
 
@@ -24,9 +25,12 @@ void FirstRun(HANDLE hConsole, COORD position) {
     cout << " Богатства недр ";
     SetConsoleCursorPosition(hConsole, position);
 }
-void ClearText(HANDLE hConsole, COORD positiontext) {
+void ClearText(HANDLE hConsole) {
+    COORD positiontext = { 0, 10 };
     SetConsoleCursorPosition(hConsole, positiontext);
-    string cleartext[7] = {
+    string cleartext[9] = {
+"                                                                           ",
+"                                                                           ",
 "                                                                           ",
 "                                                                           ",
 "                                                                           ",
@@ -36,7 +40,7 @@ void ClearText(HANDLE hConsole, COORD positiontext) {
 "                                                                           ",
     };
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 9; i++) {
         cout << cleartext[i];
     }
 }
@@ -62,16 +66,16 @@ void DrawMenu(HANDLE hConsole) {
 }
 void DrawMenuMineralRes(HANDLE hConsole) {
     string menu1[7] = {
-    "+----------+",
-    "| Топливые |",
-    "|----------|",
-    "| Рудные   |",
-    "|----------|",
-    "| Нерудные |",
-    "+----------+",
+    "+-----------+",
+    "| Топливные |",
+    "|-----------|",
+    "| Рудные    |",
+    "|-----------|",
+    "| Нерудные  |",
+    "+-----------+",
     };
 
-    COORD menu2 = { 6, 1 };
+    COORD menu2 = { 5, 1 };
     for (int i = 0; i < 7; i++) {
         menu2.Y++; SetConsoleCursorPosition(hConsole, menu2);
         cout << menu1[i] << "\n";
@@ -150,14 +154,14 @@ void FillMenuText(HANDLE hConsole, COORD position) {
 }
 void FillMenuTextMineralRes(HANDLE hConsole, COORD position) {
     COORD position1 = { 1, 1 };
-    COORD position5 = { 7, 3 };
-    COORD position6 = { 7, 5 };
-    COORD position7 = { 7, 7 };
+    COORD position5 = { 6, 3 };
+    COORD position6 = { 6, 5 };
+    COORD position7 = { 6, 7 };
 
     string menu1text[3] = {
-    " Топливые ",
-    " Рудные   ",
-    " Нерудные ",
+    " Топливные ",
+    " Рудные    ",
+    " Нерудные  ",
     };
 
     if (position.Y == 1) {
@@ -247,10 +251,14 @@ int main() {
     bool IsMineralResWork = false;
     bool IsForestResWork = false;
     bool IsWaterResWork = false;
+    int MineralResWork = 0;
+    int ForestResWork = 0;
+    int WaterResWork = 0;
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);	// Получение дескриптора устройства стандартного вывода
     COORD position = { 10, 1 };
-    COORD positiontext = { 0, 10 };
+    COORD positiontext = { 0, 12 };
+    COORD outputnumber = { 0, 10 };
 
     DrawMenu(hConsole); Fill();
     FirstRun(hConsole, position);
@@ -316,7 +324,7 @@ int main() {
                     FillMenuTextWaterRes(hConsole, position);
                 }
             }
-            Clear(); 
+            Clear();
             break;
         }
         case LEFT: {
@@ -361,19 +369,25 @@ int main() {
                 }
             }
 
-            ClearText(hConsole, positiontext);
-            SetConsoleCursorPosition(hConsole, positiontext);
+            ClearText(hConsole);
+            SetConsoleCursorPosition(hConsole, outputnumber);
             if (position.X == 10) {
+                if (position.Y != 1) { MineralResWork++; cout << "Информации о богатстве недр было прочитано " + std::to_string(MineralResWork) + " раз(а)"; }
+                SetConsoleCursorPosition(hConsole, positiontext);
                 if (position.Y == 3) cout << "К топливным относятся такие полезные искомаемые, как нефть, природный газ, уголь, торф и горячие сланцы.";
                 if (position.Y == 5) cout << "Рудные минеральные ресурсы разделяют на руды черных металлов и цветных металлов. \nК черным металлам относятся: железо, марганца, хрома. \nК цветным металлам относятся: медь, свинец, цинк и алюминей.";
                 if (position.Y == 7) cout << "Нерудные минеральные ресурсы разделяют на химическое сырье, строительные материалы и драгоценные камни. \nК химическому сырью относятся: калийные соли, сера, фосфит, апатит и пирит. \nК строительным материалам относятся: гранит, известняк, песок и глина. \nК драгоценным камням относятся: алмаз, изумруд, рубин, сапфир, яшма и агат.";
             }
             if (position.X == 25) {
+                if (position.Y != 1) { ForestResWork++; cout << "Информации о растительном мире было прочитано " + std::to_string(ForestResWork) + " раз(а)"; }
+                SetConsoleCursorPosition(hConsole, positiontext);
                 if (position.Y == 3) cout << "Лесные минеральные ресурсы разделяют на древесные и недревесные. \nК недревесным относятся: ягоды, грибы, орехи, смола и лекарственные растения.";
                 if (position.Y == 5) cout << "К кормовым ресурсам относятся травы сенокосов и пастбищ.";
                 if (position.Y == 7) cout << "К пищевым растительным ресурсам морей относятся водоросли.";
             }
             if (position.X == 40) {
+                if (position.Y != 1) { WaterResWork++; cout << "Информации о водных ресурсах было прочитано " + std::to_string(WaterResWork) + " раз(а)"; }
+                SetConsoleCursorPosition(hConsole, positiontext);
                 if (position.Y == 3) cout << "К водным ресурсам в жидком состоянии относятся океана, моря, озера, реки, болота, подземные воды и искуственно-созданные водоемы.";
                 if (position.Y == 5) cout << "К водным ресурсам газообразного состояния относится парообразное состояние атмосферы.";
                 if (position.Y == 7) cout << "К водным ресурсам твердого состояния относятся: замерзшая вода ледников Антарктиды, Арктики и снежные вершины гор.";
