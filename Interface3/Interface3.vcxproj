@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Header.h" />
     <ClInclude Include="Interface3.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
