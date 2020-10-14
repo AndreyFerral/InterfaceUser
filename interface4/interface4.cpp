@@ -34,23 +34,37 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     return 0;
 }
 
+void OutputQueue(queue <unsigned> q, HWND hWnd) {
+    HWND hList = GetDlgItem(hWnd, IDC_LIST1);
+    SendMessage(hList, LB_RESETCONTENT, 0, 0);
+
+    while (!q.empty())
+    {
+        SendMessageA(hList, LB_ADDSTRING, 0, (LPARAM)std::to_string(q.front()).data());
+        q.pop();
+    }
+
+    SendMessage(hList, WM_PAINT, 0, 0);
+
+}
+
+    queue <unsigned> q;
+    int count = 0;
+
 //Процедура обработки сообщений диалогового окна 
 BOOL CALLBACK PviewDlgProc(HWND hWnd,
     UINT wMsg,
     WPARAM wParam,
     LPARAM lParam) {
 
-    queue <unsigned> q;
     string text;
-
-
+   
     switch (wMsg) {
     case WM_CLOSE:
         PostQuitMessage(0);
         break;
         //перед отображением на экране диалогового окна
     case WM_INITDIALOG: {
-
         break;
     }
     case WM_PAINT: {
@@ -60,60 +74,22 @@ BOOL CALLBACK PviewDlgProc(HWND hWnd,
         switch (LOWORD(wParam))
         {
         case IDC_BUTTON1: {
-            HWND hList = GetDlgItem(hWnd, IDC_LIST1);
+            
             HWND hEdit = GetDlgItem(hWnd, IDC_EDIT1);
             SendMessage(hEdit, WM_GETTEXT, MAX_PATH, (LPARAM)text.data());
-
-            q.push(atoi(text.data()));
-            /*
-            text = std::to_string(q.front());
-            SendMessageA(hList, LB_ADDSTRING, 0, (LPARAM)text.data());
-            */
-            // сделать массив, которые перебирает все элементы очереди и кидает их в листбокс
-
-            for (int i = 0; i < q.size(); i++) {
-                text = std::to_string(q.front());
-                // эта функция нихуя не работает, бля
-                // надо сделать вторую очередь, где будет вывод эоемента первого, а потом его удаление 
-
-
-                SendMessageA(hList, LB_ADDSTRING, 0, (LPARAM)text.data());
-            }
-            SendMessage(hList, WM_PAINT, 0, 0);
-
-            
-        
-        
-            break;
+            if (atoi(text.data()) > 0) q.push(atoi(text.data()));
+            OutputQueue(q, hWnd);
         }
+        break;
         case IDOK:
             PostQuitMessage(0);
             break;
         case IDC_LIST1:
-            if (HIWORD(wParam) == LBN_DBLCLK) /* например Двойной Клик */
-            {
-                HWND hList = GetDlgItem(hWnd, IDC_LIST1);
-
-                //q.pop();
-
-                // здесь почему-то q пустая, пофиксить
-                while (!q.empty())
-                {
-                    SendMessageA(hList, LB_ADDSTRING, 0, (LPARAM)std::to_string(q.front()).data());
-                    q.pop();
-                }
-
-
-                /*/
-                for (int i = 0; i < q.size(); i++) {
-                    text = std::to_string(q.front());
-                    SendMessageA(hList, LB_ADDSTRING, 0, (LPARAM)text.data());
-                }
-                */
-                SendMessage(hList, WM_PAINT, 0, 0);
+            if (HIWORD(wParam) == LBN_DBLCLK) {
+                q.pop();
+                OutputQueue(q, hWnd);
             }
             break;
-       
         default:
             return FALSE;
         }
