@@ -1,9 +1,6 @@
 ﻿#include "Header.h"
 #include "framework.h"
 #include "Interface3.h"
-
-
-
 #define MAX_LOADSTRING 100
 
 // Глобальные переменные:
@@ -28,12 +25,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     GdiplusStartupInput input;
     input.GdiplusVersion = 1;
     GdiplusStartup(&token, &input, NULL);
-
-    //UNREFERENCED_PARAMETER(hPrevInstance);
-    //UNREFERENCED_PARAMETER(lpCmdLine);
-
-    // TODO: Разместите код здесь.
-
 
     // Инициализация глобальных строк
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -68,7 +59,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     WNDCLASSEXW wcex;
 
     wcex.cbSize = sizeof(WNDCLASSEX);
-
     wcex.style          = CS_HREDRAW | CS_VREDRAW;
     wcex.lpfnWndProc    = WndProc;
     wcex.cbClsExtra     = 0;
